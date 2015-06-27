@@ -25,7 +25,7 @@ class KDTreeMapClassifierTest extends FunSuite {
   
   val data = List[(Int,Parity)](1 -> Odd, 12 -> Even, 6 -> Even, 43 -> Odd)
 
-  implicit val intParityClassifier = KNN.kdTreeClassifier[Int,Int,Parity]
+  implicit val intParityClassifier = KNN.kdTree1nnClassifier[Int,Int,Parity]
 
   test("Classifier quick test") {
 
