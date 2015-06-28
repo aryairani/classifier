@@ -51,7 +51,7 @@ lazy val dataset = project
 
 lazy val impl = project
   .dependsOn(core)
-  .settings(lib(kdtree))
+  .settings(lib(kdtree), lib(scalatest))
 
 lazy val util = project.settings(lib(scalaz("effect")))
 

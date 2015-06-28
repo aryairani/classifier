@@ -1,9 +1,9 @@
 package dataset.cifar
 
-import java.io.File
+import java.io.InputStream
 
 import classifier.SplitLabeled
-import tools.{PathHelp, StreamTools}
+import tools.StreamTools
 
 import scalaz.concurrent.Task
 import scalaz.stream._
@@ -19,23 +19,24 @@ object CIFAR10 {
     }
   }
 
-  def loadBatch(file: File): Process[Task, Labeled] =
-    Process.constant(3073).toSource.through(io.fileChunkR(file.getAbsolutePath))
+  def loadBatch(is: InputStream): Process[Task, Labeled] =
+    Process.constant(3073).toSource.through(io.chunkR(is))
       .map(v => Labeled(v.head, CifarUnlabeled(v.tail.toArray)))
 
-  val pathHelp = PathHelp.fromString("/Users/arya/Downloads/cifar-10-batches-bin")
-  import pathHelp._
-  import StreamTools.{nonemptyString => nonEmpty}
+  val path = "cifar-10-batches-bin"
+  def p(s: String) = s"$path/$s"
+  def ps(s: String) =  Thread.currentThread.getContextClassLoader.getResourceAsStream(p(s))
+  import StreamTools.{nonemptyString ⇒ nonEmpty}
 
   def trainingStream =
     Process.emitAll(1 to 5)
-      .map(i => p(s"data_batch_$i.bin"))
+      .map(i => ps(s"data_batch_$i.bin"))
       .flatMap(loadBatch)
       .map(Labeled.splitLabel.split)
 
-  def testStream = loadBatch(p("test_batch.bin")).map(Labeled.splitLabel.split)
+  def testStream = loadBatch(ps("test_batch.bin")).map(Labeled.splitLabel.split)
 
-  def metaStream = io.linesR(p("batches.meta.txt").getAbsolutePath).filter(nonEmpty)
+  def metaStream = io.linesR(ps("batches.meta.txt")).filter(nonEmpty)
 
   def dotPerN[A](n: Int): Process1[A,String] = Process.await1[A].chunk(n).map(_ => ".")
 
