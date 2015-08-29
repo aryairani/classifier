@@ -29,6 +29,7 @@ resourceGenerators in Compile <+= (resourceManaged in Compile, taskTemporaryDire
 
 }
 
+// todo: Find a better untgz that doesn't need this nonsense
 import org.codehaus.plexus.logging.{Logger ⇒ PLogger}
 
 lazy val nullPLogger = new PLogger {

@@ -6,10 +6,6 @@ val breeze = libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze-natives" % "0.11.2"
 )
 
-//resolvers += "Sonatype OSS Releases" at "http://oss.sonatype.org/content/repositories/releases/"
-
-
-
 scalaVersion in ThisBuild := "2.11.6"
 
 scalacOptions in ThisBuild ++= Seq(
@@ -40,14 +36,25 @@ val kdtree = "com.thesamet" %% "kdtree" % "1.0.3"
 
 def lib(m: ModuleID) = libraryDependencies += m
 
-lazy val root = project.in(file(".")).aggregate(core,dataset,impl,util,example)
+val commonSettings = Seq(
+  organization := "net.arya.cs231n"
+)
+
+lazy val root = project.in(file(".")).aggregate(core,impl,dataset,util,example)
 
 lazy val core = project
-  .settings(lib(scalaz("core")))
+  .settings(lib(scalaz("core")), lib(scalazStream))
 
 lazy val dataset = project
   .dependsOn(core, util)
+  .settings(lib("net.arya.cs231n" % "dataset-files" % "0.1-SNAPSHOT"))
   .settings(lib(scalazStream), lib(kdtree % "compile"))
+
+lazy val `dataset-files` = project.settings(commonSettings: _*).settings(
+  publishArtifact in packageDoc := false,
+  publishArtifact in packageSrc := false,
+  crossPaths := false
+)
 
 lazy val impl = project
   .dependsOn(core)
@@ -56,4 +63,4 @@ lazy val impl = project
 lazy val util = project.settings(lib(scalaz("effect")))
 
 lazy val example = project
-  .dependsOn(core, dataset, impl)
+  .dependsOn(core,impl,dataset)
