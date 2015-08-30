@@ -65,12 +65,12 @@ object Classifier {
   /** Can classify E as L based on I to L experience and the ability to convert E to I */
   type K[M0[_,_],E,I,L] = Classifier[M0[I,L],E,L]
   /** Can classify E as L based on I to L experience and the ability to convert E to I */
-  trait KT[M0[_,_],E,I,L] extends Classifier[M0[I,L],E,L]
+  trait KT[M0[_,_],E,I,L] extends Classifier[M0[I,L],E,L] // the T stands for Trait
 
   /** Can classify E as L based on E to L experience */
   type KE[M[_,_],E,L] = K[M,E,E,L]
   /** Can classify E as L based on E to L experience */
-  trait KET[M[_,_],E,L] extends K[M,E,E,L]
+  trait KET[M[_,_],E,L] extends K[M,E,E,L] // the T stands for Trait
 }
 
 
