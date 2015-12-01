@@ -1,9 +1,9 @@
 val breeze = libraryDependencies ++= Seq(
   // other dependencies here
-  "org.scalanlp" %% "breeze" % "0.11.2",
+  "org.scalanlp" %% "breeze" % "0.11.2"
   // native libraries are not included by default. add this if you want them (as of 0.7)
   // native libraries greatly improve performance, but increase jar sizes.
-  "org.scalanlp" %% "breeze-natives" % "0.11.2"
+//  "org.scalanlp" %% "breeze-natives" % "0.11.2"
 )
 
 lazy val commonScalacOptions = Seq(
@@ -36,7 +36,7 @@ lazy val warnUnusedImport = Seq(
   scalacOptions in (Test, console) <<= (scalacOptions in (Compile, console))
 )
 
-def scalaz(module: String) = "org.scalaz" %% s"scalaz-$module" % "7.1.3"
+def scalaz(module: String) = "org.scalaz" %% s"scalaz-$module" % "7.1.5"
 val scalazStream = "org.scalaz.stream" %% "scalaz-stream" % "0.8"
 val scalatest = "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 val scalacheck = "org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
@@ -44,12 +44,6 @@ val scalacheck = "org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
 val kdtree = "com.thesamet" %% "kdtree" % "1.0.3"
 
 def lib(m: ModuleID) = libraryDependencies += m
-
-val commonSettings = Seq(
-  organization := "net.arya.cs231n",
-  scalaVersion := "2.11.7",
-  scalacOptions ++= commonScalacOptions
-) ++ warnUnusedImport
 
 lazy val root = project.in(file("."))
   .settings(commonSettings: _*)
@@ -85,3 +79,34 @@ lazy val util = project
 lazy val example = project
   .settings(commonSettings: _*)
   .dependsOn(core,impl,dataset)
+
+lazy val commonSettings = Seq(
+  organization := "net.arya.cs231n",
+  scalaVersion := "2.11.7",
+  scalacOptions ++= commonScalacOptions,
+  resolvers += Resolver.sonatypeRepo("snapshots"),
+  publishMavenStyle := true,
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+  },
+  publishArtifact in Test := false,
+  pomExtra := (
+    <scm>
+      <url>git@github.com:refried/classifier.git</url>
+      <connection>scm:git:git@github.com:refried/classifier.git</connection>
+    </scm>
+      <developers>
+        <developer>
+          <id>refried</id>
+          <name>Arya Irani</name>
+          <url>https://github.com/refried</url>
+        </developer>
+      </developers>),
+  licenses := Seq("MIT-style" -> url("http://opensource.org/licenses/MIT")),
+  homepage := Some(url("https://github.com/refried/classifier"))
+) ++ warnUnusedImport
+
