@@ -36,10 +36,8 @@ lazy val warnUnusedImport = Seq(
   scalacOptions in (Test, console) <<= (scalacOptions in (Compile, console))
 )
 
-resolvers += "Scalaz Bintray Repo" at "https://dl.bintray.com/scalaz/releases"
-
 def scalaz(module: String) = "org.scalaz" %% s"scalaz-$module" % "7.1.3"
-val scalazStream = "org.scalaz.stream" %% "scalaz-stream" % "0.7.1a"
+val scalazStream = "org.scalaz.stream" %% "scalaz-stream" % "0.8"
 val scalatest = "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 val scalacheck = "org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
 
